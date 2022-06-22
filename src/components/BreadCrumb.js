@@ -1,5 +1,7 @@
 export default class Breadcrumb {
-    constructor($target) {
+    constructor({ $target, initialState }) {
+        this.state = initialState;
+
         this.nav = document.createElement("nav");
         this.nav.className = "Breadcrumb";
         
@@ -8,10 +10,16 @@ export default class Breadcrumb {
         this.render();
     }
 
+    setState(nextState) {
+        this.state = nextState;
+        this.render();
+    }
+
     render() {
         this.nav.innerHTML = `
-            <div>root</div>
-            <div>노란고양이</div>
+            ${this.state.map(({name, id}) => {
+                return `<div data-id=${id}>${name}</div>`;
+            }).join("")}
         `;
     }
 }
