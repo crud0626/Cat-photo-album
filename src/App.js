@@ -53,7 +53,23 @@ export default class App {
 
         this.imageView = new ImageView({ 
             $target,
-            initialState: this.state.currImage
+            initialState: this.state.currImage,
+            onClick: () => {
+                this.setState({
+                    ...this.state,
+                    currImage: null
+                });
+            }
+        });
+
+        const body = document.querySelector("body");
+        body.addEventListener("keyup", e => {
+            if(e.key === "Escape" && this.state.currImage) {
+                this.setState({
+                    ...this.state,
+                    currImage: null
+                });
+            }
         });
 
         this.init();
