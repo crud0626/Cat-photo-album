@@ -5,27 +5,28 @@ import Nodes from "./components/Nodes.js";
 import { request } from "./utils/api.js";
 
 export default class App {
-    constructor($target) {
+    constructor($app) {
         this.state = {
             items: [],
             path: [{
                 name: "root",
                 id: 0
             }],
-            currImage: null,
+            selectedImage: null,
             isRoot: true,
             isLoading: false
         };
+
         this.cache = {};
 
         this.breadCrumb = new Breadcrumb({ 
-            $target,
+            $app,
             initialState: this.state.path,
             onClick: target => {
                 const targetId = target.dataset.id;
-                const current = this.state.path[this.state.path.length-1];
+                const currentNode = this.state.path[this.state.path.length-1];
                 
-                if(targetId !== current.id) {
+                if(targetId !== currentNode.id) {
                     const targetIndex = parseInt(target.dataset.index);
                     const path = [...this.state.path];
                     path.splice(targetIndex + 1);
@@ -41,7 +42,7 @@ export default class App {
         });
 
         this.nodes = new Nodes({
-            $target,
+            $app,
             initialState: {
                 items: this.state.items, 
                 isRoot: this.state.isRoot 
@@ -58,6 +59,9 @@ export default class App {
                     let data;
                     
                     try {
+                        const path = [...this.state.path];
+                        path.push({name, id});
+
                         if (this.cache[id]) {
                             data = this.cache[id]
                         } else {
@@ -65,17 +69,12 @@ export default class App {
                             this.cache[id] = data;
                         }
 
-                        const path = [...this.state.path];
-                        path.push({name, id});
-
-                        if (data) {
-                            this.setState({
-                                ...this.state,
-                                items: data,
-                                isRoot: false,
-                                path
-                            });
-                        }
+                        this.setState({
+                            ...this.state,
+                            items: data,
+                            isRoot: false,
+                            path
+                        });
                     } catch (e) {
                         alert("에러가 발생했습니다.");
                         throw new Error(`에러가 발생했습니다. ${e.message}`);
@@ -88,7 +87,7 @@ export default class App {
                 } else if(target.dataset.type === "FILE") {
                     this.setState({
                         ...this.state,
-                        currImage: target.dataset.src
+                        selectedImage: target.dataset.src
                     });
                 } else {}
             },
@@ -106,27 +105,27 @@ export default class App {
         });
 
         this.imageView = new ImageView({ 
-            $target,
-            initialState: this.state.currImage,
+            $app,
+            initialState: this.state.selectedImage,
             onClick: () => {
                 this.setState({
                     ...this.state,
-                    currImage: null
+                    selectedImage: null
                 });
             }
         });
 
         this.loading = new Loading({ 
-            $target, 
+            $app, 
             initialState: this.state.isLoading
         });
 
         const body = document.querySelector("body");
         body.addEventListener("keyup", e => {
-            if(e.key === "Escape" && this.state.currImage) {
+            if(e.key === "Escape" && this.state.selectedImage) {
                 this.setState({
                     ...this.state,
-                    currImage: null
+                    selectedImage: null
                 });
             }
         });
@@ -141,7 +140,7 @@ export default class App {
             items: this.state.items,
             isRoot: this.state.isRoot
         });
-        this.imageView.setState(this.state.currImage);
+        this.imageView.setState(this.state.selectedImage);
         this.loading.setState(this.state.isLoading);
     }
 

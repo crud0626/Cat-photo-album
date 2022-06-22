@@ -1,13 +1,12 @@
 export default class Loading {
-    constructor({ $target, initialState }) {
+    constructor({ $app, initialState }) {
         this.state = initialState;
-        this.modal = document.createElement("div");
-        this.modal.className = "Modal Loading";
-        this.modal.innerHTML = `
-            <div class="content"><img src="./assets/nyan-cat.gif"></div>
-        `;
+        
+        this.target = document.createElement("div");
+        this.target.className = "Modal Loading";
+        this.target.innerHTML = `<div class="content"><img src="./assets/nyan-cat.gif"></div>`;
 
-        $target.appendChild(this.modal);
+        $app.appendChild(this.target);
 
         this.render();
     }
@@ -19,7 +18,7 @@ export default class Loading {
 
     render() {
         this.state 
-        ? this.modal.style.visibility = "visible"
-        : this.modal.style.visibility = "hidden";
+        ? this.target.style.visibility = "visible"
+        : this.target.style.visibility = "hidden";
     }
 }

@@ -1,18 +1,22 @@
+const PREVBTN_TEMPLATE = `<div data-type="PREVBTN" class="Node"><img src="./assets/prev.png"></div>`;
+
 export default class Nodes {
-    constructor({ $target, initialState, onClick, onBackClick }) {
+    constructor({ $app, initialState, onClick, onBackClick }) {
         this.state = initialState;
-        this.nodes = document.createElement("div");
-        this.nodes.className = "Nodes";
-        this.nodes.addEventListener("click", e => {
+
+        this.target = document.createElement("div");
+        this.target.className = "Nodes";
+        this.target.addEventListener("click", e => {
             const target = e.target.closest(".Node");
-            if (target.dataset.type === "PREVBTN") {
-                onBackClick();
-            } else {
-                onClick(target);
+
+            if (target) {
+                target.dataset.type === "PREVBTN" 
+                ? onBackClick() 
+                : onClick(target);
             }
         });
         
-        $target.appendChild(this.nodes);
+        $app.appendChild(this.target);
 
         this.render();
     }
@@ -42,6 +46,6 @@ export default class Nodes {
             }).join("")}
         `;
 
-        this.nodes.innerHTML = this.state.isRoot ? nodes : `<div data-type="PREVBTN" class="Node"><img src="./assets/prev.png"></div>${nodes}`;
+        this.target.innerHTML = this.state.isRoot ? nodes : `${PREVBTN_TEMPLATE}${nodes}`;
     }
 }
