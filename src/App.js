@@ -11,8 +11,10 @@ export default class App {
                 name: "root",
                 id: 0
             }],
-            currImage: null
+            currImage: null,
+            isRoot: true
         };
+        this.cache = {};
 
         this.breadCrumb = new Breadcrumb({ 
             $target,
@@ -21,21 +23,32 @@ export default class App {
 
         this.nodes = new Nodes({
             $target,
-            initialState: this.state.items,
+            initialState: {
+                items: this.state.items, 
+                isRoot: this.state.isRoot 
+            },
             onClick: async (target) => {
                 if (target.dataset.type === "DIRECTORY") {
                     const name = target.innerText;
                     const id = target.dataset.id;
+                    let data;
                     
                     try {
-                        const data = await request(id);
-                        const path = [...this.state.path];
-                        if (data) {
-                            path.push({name, id});
+                        if (this.cache[id]) {
+                            data = this.cache[id]
+                        } else {
+                            data = await request(id);
+                            this.cache[id] = data;
+                        }
 
+                        const path = [...this.state.path];
+                        path.push({name, id});
+
+                        if (data) {
                             this.setState({
                                 ...this.state,
                                 items: data,
+                                isRoot: false,
                                 path
                             });
                         }
@@ -48,6 +61,17 @@ export default class App {
                         currImage: target.dataset.src
                     });
                 } else {}
+            },
+            onBackClick: () => {
+                const path = [...this.state.path];
+                path.pop();
+                const { id } = path[path.length-1];
+                this.setState({
+                    ...this.state,
+                    items: this.cache[id],
+                    isRoot: path.length === 1 ? true : false,
+                    path
+                });
             }
         });
 
@@ -76,9 +100,15 @@ export default class App {
     }
 
     setState(nextState) {
+        //
+        console.log(this.cache);
+        //
         this.state = nextState;
         this.breadCrumb.setState(this.state.path);
-        this.nodes.setState(this.state.items);
+        this.nodes.setState({
+            items: this.state.items,
+            isRoot: this.state.isRoot
+        });
         this.imageView.setState(this.state.currImage);
     }
 
@@ -88,8 +118,10 @@ export default class App {
         if (data) {
             this.setState({
                 ...this.state,
-                items: data
+                items: data,
+                isRoot: true
             });
+            this.cache[0] = data;
         }
     }
 }
