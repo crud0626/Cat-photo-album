@@ -3,7 +3,12 @@ export default class Nodes {
         this.state = initialState;
         this.nodes = document.createElement("div");
         this.nodes.className = "Nodes";
-        this.nodes.addEventListener("click", onClick);
+        this.nodes.addEventListener("click", e => {
+            const target = e.target.closest(".Node");
+            if (target) {
+                onClick(target);
+            };
+        });
         
         $target.appendChild(this.nodes);
 
@@ -17,17 +22,17 @@ export default class Nodes {
 
     render() {
         this.nodes.innerHTML = `
-            ${this.state.map(({id, name, type}) => {
+            ${this.state.map(({id, name, type, filePath}) => {
                 if (type === "DIRECTORY") {
                     return `
-                        <div data-id=${id} class="Node">
+                        <div data-id=${id} data-type=${type} class="Node">
                             <img src="./assets/directory.png">
                             <div>${name}</div>
                         </div>
                     `;
                 } else {
                     return `
-                        <div data-id=${id} class="Node">
+                        <div data-id=${id} data-type=${type} data-src=${filePath} class="Node">
                             <img src="./assets/file.png">
                         <div>${name}</div>
                     `;

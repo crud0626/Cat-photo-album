@@ -10,7 +10,8 @@ export default class App {
             path: [{
                 name: "root",
                 id: 0
-            }]
+            }],
+            currImage: null
         };
 
         this.breadCrumb = new Breadcrumb({ 
@@ -21,10 +22,8 @@ export default class App {
         this.nodes = new Nodes({
             $target,
             initialState: this.state.items,
-            onClick: async (e) => {
-                const target = e.target.closest(".Node");
-                
-                if (target) {
+            onClick: async (target) => {
+                if (target.dataset.type === "DIRECTORY") {
                     const name = target.innerText;
                     const id = target.dataset.id;
                     
@@ -43,11 +42,19 @@ export default class App {
                     } catch (e) {
                         throw new Error(`에러가 발생했습니다. ${e}`);
                     }
-                }
+                } else if(target.dataset.type === "FILE") {
+                    this.setState({
+                        ...this.state,
+                        currImage: target.dataset.src
+                    });
+                } else {}
             }
         });
 
-        this.imageView = new ImageView({ $target });
+        this.imageView = new ImageView({ 
+            $target,
+            initialState: this.state.currImage
+        });
 
         this.init();
     }
@@ -56,6 +63,7 @@ export default class App {
         this.state = nextState;
         this.breadCrumb.setState(this.state.path);
         this.nodes.setState(this.state.items);
+        this.imageView.setState(this.state.currImage);
     }
 
     init = async () => {
