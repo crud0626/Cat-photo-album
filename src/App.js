@@ -6,14 +6,47 @@ import { request } from "./utils/api.js";
 export default class App {
     constructor($target) {
         this.state = {
-            items: []
+            items: [],
+            path: [{
+                name: "root",
+                id: 0
+            }]
         };
 
-        this.breadCrumb = new Breadcrumb({ $target });
+        this.breadCrumb = new Breadcrumb({ 
+            $target,
+            initialState: this.state.path
+        });
+
         this.nodes = new Nodes({
             $target,
-            initialState: this.state.items
+            initialState: this.state.items,
+            onClick: async (e) => {
+                const target = e.target.closest(".Node");
+                
+                if (target) {
+                    const name = target.innerText;
+                    const id = target.dataset.id;
+                    
+                    try {
+                        const data = await request(id);
+                        const path = [...this.state.path];
+                        if (data) {
+                            path.push({name, id});
+
+                            this.setState({
+                                ...this.state,
+                                items: data,
+                                path
+                            });
+                        }
+                    } catch (e) {
+                        throw new Error(`에러가 발생했습니다. ${e}`);
+                    }
+                }
+            }
         });
+
         this.imageView = new ImageView({ $target });
 
         this.init();
@@ -21,6 +54,7 @@ export default class App {
 
     setState(nextState) {
         this.state = nextState;
+        this.breadCrumb.setState(this.state.path);
         this.nodes.setState(this.state.items);
     }
 

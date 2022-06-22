@@ -1,8 +1,9 @@
 export default class Nodes {
-    constructor({ $target, initialState }) {
+    constructor({ $target, initialState, onClick }) {
         this.state = initialState;
         this.nodes = document.createElement("div");
         this.nodes.className = "Nodes";
+        this.nodes.addEventListener("click", onClick);
         
         $target.appendChild(this.nodes);
 
@@ -10,7 +11,6 @@ export default class Nodes {
     }
 
     setState(nextState) {
-        
         this.state = nextState;
         this.render();
     }
