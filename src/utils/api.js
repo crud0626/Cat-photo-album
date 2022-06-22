@@ -9,6 +9,6 @@ export const request = async (nodeId) => {
             return res.json();
         }
     } catch (e) {
-        throw new Error(`에러가 발생했습니다. ${e}`);
+        throw e;
     }
 }

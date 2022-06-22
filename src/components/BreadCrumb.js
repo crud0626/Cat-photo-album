@@ -1,9 +1,14 @@
 export default class Breadcrumb {
-    constructor({ $target, initialState }) {
+    constructor({ $target, initialState, onClick }) {
         this.state = initialState;
 
         this.nav = document.createElement("nav");
         this.nav.className = "Breadcrumb";
+        this.nav.addEventListener("click", e => {
+            if(!e.target.matches(".Breadcrumb")) {
+                onClick(e.target);
+            }
+        })
         
         $target.appendChild(this.nav);
 
@@ -17,8 +22,8 @@ export default class Breadcrumb {
 
     render() {
         this.nav.innerHTML = `
-            ${this.state.map(({name, id}) => {
-                return `<div data-id=${id}>${name}</div>`;
+            ${this.state.map(({name, id}, index) => {
+                return `<div data-id=${id} data-index=${index}>${name}</div>`;
             }).join("")}
         `;
     }
