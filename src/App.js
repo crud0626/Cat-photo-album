@@ -2,16 +2,13 @@ import Breadcrumb from "./components/BreadCrumb.js";
 import ImageView from "./components/ImageView.js";
 import Loading from "./components/Loading.js";
 import Nodes from "./components/Nodes.js";
-import { request } from "./utils/api.js";
+import { request } from "./services/api.js";
 
 export default class App {
     constructor($app) {
         this.state = {
             items: [],
-            path: [{
-                name: "root",
-                id: 0
-            }],
+            path: [],
             selectedImage: null,
             isRoot: true,
             isLoading: false
@@ -157,6 +154,10 @@ export default class App {
                 this.setState({
                     ...this.state,
                     items: data,
+                    path: [{
+                        name: "root",
+                        id: 0
+                    }],
                     isRoot: true,
                 });
                 this.cache[0] = data;

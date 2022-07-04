@@ -40,7 +40,8 @@ export default class Nodes {
                     return `
                         <div data-id=${id} data-type=${type} data-src=${filePath} class="Node">
                             <img src="./assets/file.png">
-                        <div>${name}</div>
+                            <div>${name}</div>
+                        </div>
                     `;
                 }
             }).join("")}

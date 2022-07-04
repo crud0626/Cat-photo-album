@@ -8,7 +8,7 @@ export default class Breadcrumb {
             if(!e.target.matches(".Breadcrumb")) {
                 onClick(e.target);
             }
-        })
+        });
         
         $app.appendChild(this.target);
 
