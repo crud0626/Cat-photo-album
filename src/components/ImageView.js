@@ -8,7 +8,7 @@ export default class ImageView {
         this.target.className = "Modal ImageViewer";
         this.target.addEventListener("click", e => {
             if (e.target.matches(".ImageViewer")) {
-                onClick(e.target);
+                onClick();
             }
         });
 
