@@ -5,7 +5,7 @@ export default class Breadcrumb {
         this.target = document.createElement("nav");
         this.target.className = "Breadcrumb";
         this.target.addEventListener("click", e => {
-            if(!e.target.matches(".Breadcrumb")) {
+            if(e.target.dataset.id) {
                 onClick(e.target);
             }
         });
